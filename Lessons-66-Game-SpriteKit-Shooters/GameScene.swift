@@ -53,18 +53,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         timer()
         levelUp()
         createTargetsInfo()
-        
-        // Масштабируем сцену под экран
-        //self.scaleMode = .Fill
-        
-        // Создаем и настраиваем "курсор"
-        //        cursor = SKSpriteNode(imageNamed: "cursor")
-        //        cursor.size = CGSize(width: 50, height: 50) // Размер курсора
-        //        cursor.zPosition = 1000 // Отображение поверх всех элементов
-        //        addChild(cursor)
-        //
-        //        // Устанавливаем изначальную позицию
-        //        cursor.position = CGPoint(x: size.width / 2, y: size.height / 2)
     }
     
     func createBackground() {
@@ -104,8 +92,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         target.setup()
         
         // Проверка, добавляется ли мишень
-            print("Создана мишень с именем: \(target.target.name ?? "без имени")")
-
+        print("Создана мишень с именем: \(target.target.name ?? "без имени")")
         
         let level = Int.random(in: 0...2)
         var movingRight = true
@@ -151,7 +138,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         targetDelay *= 0.99
         targetsCreated += 1
         
-      // print(targetsCreated, targetSpeed)
+        // print(targetsCreated, targetSpeed)
         
         if targetsCreated < 120 {
             DispatchQueue.main.asyncAfter(deadline: .now() + targetDelay) { [unowned self] in
@@ -167,13 +154,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func gameOver() {
         isGameOver = true
         gamePaused = true  // Останавливаем игру
+        run(SKAction.playSoundFileNamed("Ha-Ha.m4a", waitForCompletion: false))
         
         // Создаем узел для отображения текста "Game Over"
         let gameOverTitle = SKSpriteNode(imageNamed: "game-over")
         gameOverTitle.position = CGPoint(x: size.width / 2, y: size.height / 1.4) // Центр сцены
         gameOverTitle.alpha = 0
         gameOverTitle.setScale(2) // Увеличенный начальный масштаб
- 
+        
         // Создаем анимации
         let fadeIn = SKAction.fadeIn(withDuration: 0.3) // Плавное появление
         let scaleDown = SKAction.scale(to: 1, duration: 0.3) // Уменьшение масштаба до 1
@@ -187,7 +175,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Вызываем кастомное окно оповещения
         showCustomAlert()
         
-                          // системный алерт
+        // системный алерт
         //        // Получаем доступ к текущему представлению и его контроллеру
         //        if let view = self.view, let viewController = view.window?.rootViewController {
         //            // Создаем UIAlertController
@@ -253,52 +241,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-//    func shot(at location: CGPoint) {
-//        let hitNodes = nodes(at: location).filter { $0.name == "target" }
-//        
-//        guard let hitNode = hitNodes.first else { return }
-//        guard let parentNode = hitNode.parent as? Target else { return }
-//        
-//        parentNode.hit()
-//        
-//        score += 3
-//        
-//    }
-    
-//    func shot(at location: CGPoint) {
-//        // Проверяем, есть ли в месте касания мишень с именем "target3"
-//        let hitNodes3 = nodes(at: location).filter { $0.name == "target3" }
-//        
-//        if let hitNode = hitNodes3.first {
-//            // Если попали в target3, уменьшаем счет на 5
-//            score -= 5
-//            hitNode.removeFromParent() // Убираем мишень с экрана после попадания
-//            return
-//        }
-//        
-//        // Если попали в обычную мишень target0, target1 или target2, увеличиваем счет
-//        let hitNodes = nodes(at: location).filter { $0.name == "target0" || $0.name == "target1" || $0.name == "target2" }
-//        
-//        if let hitNode = hitNodes.first {
-//            switch hitNode.name {
-//            case "target0":
-//                score += 1
-//            case "target1":
-//                score += 3
-//            case "target2":
-//                score += 5
-//            default:
-//                break
-//            }
-//            
-//            hitNode.removeFromParent() // Убираем мишень с экрана после попадания
-//        }
-//    }
-
-    
     func shot(at location: CGPoint) {
         let hitNodes = nodes(at: location)
-
+        
         for node in hitNodes {
             if let nodeName = node.name {
                 switch nodeName {
@@ -320,14 +265,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-
     
     func reload() {
         guard isGameOver == false else { return }
         
         run(SKAction.playSoundFileNamed("reload.wav", waitForCompletion: false))
         bulletsInClip = 3
-       // score -= 1
+        // score -= 1
     }
     
     func timer() {
