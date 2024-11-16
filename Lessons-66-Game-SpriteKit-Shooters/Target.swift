@@ -18,7 +18,7 @@ class Target: SKNode {
         stick = SKSpriteNode(imageNamed: "stick\(stickType)")
         target = SKSpriteNode(imageNamed: "target\(targetType)")
 
-        target.name = "target"
+        target.name = "target\(targetType)"
         target.position.y += 116
 
         addChild(stick)

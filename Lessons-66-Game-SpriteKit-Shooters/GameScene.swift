@@ -52,6 +52,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         createOverlay()
         timer()
         levelUp()
+        createTargetsInfo()
         
         // Масштабируем сцену под экран
         //self.scaleMode = .Fill
@@ -102,6 +103,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let target = Target()
         target.setup()
         
+        // Проверка, добавляется ли мишень
+            print("Создана мишень с именем: \(target.target.name ?? "без имени")")
+
+        
         let level = Int.random(in: 0...2)
         var movingRight = true
         
@@ -146,7 +151,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         targetDelay *= 0.99
         targetsCreated += 1
         
-        print(targetsCreated, targetSpeed)
+      // print(targetsCreated, targetSpeed)
         
         if targetsCreated < 120 {
             DispatchQueue.main.asyncAfter(deadline: .now() + targetDelay) { [unowned self] in
@@ -230,7 +235,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         } else {
             // Проверяем, есть ли мишень в месте касания
-            let hitNodes = nodes(at: location).filter { $0.name == "target" }
+            let hitNodes = nodes(at: location).filter { $0.name == "target3" || $0.name == "target0" || $0.name == "target1" || $0.name == "target2" }
             
             if hitNodes.first != nil {
                 // Если попали в мишень, стреляем
@@ -248,24 +253,81 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+//    func shot(at location: CGPoint) {
+//        let hitNodes = nodes(at: location).filter { $0.name == "target" }
+//        
+//        guard let hitNode = hitNodes.first else { return }
+//        guard let parentNode = hitNode.parent as? Target else { return }
+//        
+//        parentNode.hit()
+//        
+//        score += 3
+//        
+//    }
+    
+//    func shot(at location: CGPoint) {
+//        // Проверяем, есть ли в месте касания мишень с именем "target3"
+//        let hitNodes3 = nodes(at: location).filter { $0.name == "target3" }
+//        
+//        if let hitNode = hitNodes3.first {
+//            // Если попали в target3, уменьшаем счет на 5
+//            score -= 5
+//            hitNode.removeFromParent() // Убираем мишень с экрана после попадания
+//            return
+//        }
+//        
+//        // Если попали в обычную мишень target0, target1 или target2, увеличиваем счет
+//        let hitNodes = nodes(at: location).filter { $0.name == "target0" || $0.name == "target1" || $0.name == "target2" }
+//        
+//        if let hitNode = hitNodes.first {
+//            switch hitNode.name {
+//            case "target0":
+//                score += 1
+//            case "target1":
+//                score += 3
+//            case "target2":
+//                score += 5
+//            default:
+//                break
+//            }
+//            
+//            hitNode.removeFromParent() // Убираем мишень с экрана после попадания
+//        }
+//    }
+
+    
     func shot(at location: CGPoint) {
-        let hitNodes = nodes(at: location).filter { $0.name == "target" }
-        
-        guard let hitNode = hitNodes.first else { return }
-        guard let parentNode = hitNode.parent as? Target else { return }
-        
-        parentNode.hit()
-        
-        score += 3
-        
+        let hitNodes = nodes(at: location)
+
+        for node in hitNodes {
+            if let nodeName = node.name {
+                switch nodeName {
+                case "target0":
+                    score += 1
+                case "target1":
+                    score += 2
+                case "target2":
+                    score += 3
+                case "target3":
+                    score -= 5
+                default:
+                    continue
+                }
+                
+                // Удаляем узел после попадания
+                node.removeFromParent()
+                return
+            }
+        }
     }
+
     
     func reload() {
         guard isGameOver == false else { return }
         
         run(SKAction.playSoundFileNamed("reload.wav", waitForCompletion: false))
         bulletsInClip = 3
-        score -= 1
+       // score -= 1
     }
     
     func timer() {
@@ -353,4 +415,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         timer()
     }
     
+    func createTargetsInfo() {
+        let infoNode = SKNode()
+        infoNode.name = "targetsInfo" // Для удобства управления
+        
+        // Определяем позиции и размеры для целей
+        let targetData = [
+            ("target0", 1, CGPoint(x: -25, y: 0)),
+            ("target1", 2, CGPoint(x: -25, y: -60)),
+            ("target2", 3, CGPoint(x: -25, y: -120)),
+            ("target3", -5, CGPoint(x: -25, y: -180))
+        ]
+        
+        for (imageName, scoreValue, position) in targetData {
+            // Создаем узел с изображением
+            let targetSprite = SKSpriteNode(imageNamed: imageName)
+            targetSprite.size = CGSize(width: 40, height: 40)
+            targetSprite.position = position
+            targetSprite.anchorPoint = CGPoint(x: 0, y: 0.5) // Выравнивание по левому краю
+            
+            // Создаем метку для отображения стоимости
+            let scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+            scoreLabel.fontSize = 20
+            scoreLabel.fontColor = .white
+            scoreLabel.text = "\(scoreValue)"
+            scoreLabel.horizontalAlignmentMode = .left
+            scoreLabel.position = CGPoint(x: position.x + 50, y: position.y)
+            
+            // Добавляем элементы в общий узел
+            infoNode.addChild(targetSprite)
+            infoNode.addChild(scoreLabel)
+        }
+        
+        // Устанавливаем позицию и добавляем общий узел в сцену
+        infoNode.position = CGPoint(x: size.width - 120, y: size.height - 100)
+        infoNode.zPosition = 600 // Отображение поверх игрового фона
+        addChild(infoNode)
+    }
 }
