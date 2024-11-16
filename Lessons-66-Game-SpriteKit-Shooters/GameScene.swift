@@ -75,7 +75,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(background)
         
         let grass = SKSpriteNode(imageNamed: "grass-trees")
-        grass.position = CGPoint(x: 512, y: 50)
+        grass.position = CGPoint(x: 512, y: 250)
         addChild(grass)
         grass.zPosition = 100
     }
@@ -421,10 +421,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Определяем позиции и размеры для целей
         let targetData = [
-            ("target0", 1, CGPoint(x: -25, y: 0)),
-            ("target1", 2, CGPoint(x: -25, y: -60)),
-            ("target2", 3, CGPoint(x: -25, y: -120)),
-            ("target3", -5, CGPoint(x: -25, y: -180))
+            ("target0", 1, CGPoint(x: -15, y: 0)),
+            ("target1", 2, CGPoint(x: -15, y: -60)),
+            ("target2", 3, CGPoint(x: -15, y: -120)),
+            ("target3", -5, CGPoint(x: -15, y: -180))
         ]
         
         for (imageName, scoreValue, position) in targetData {
@@ -432,7 +432,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let targetSprite = SKSpriteNode(imageNamed: imageName)
             targetSprite.size = CGSize(width: 40, height: 40)
             targetSprite.position = position
-            targetSprite.anchorPoint = CGPoint(x: 0, y: 0.5) // Выравнивание по левому краю
+            targetSprite.anchorPoint = CGPoint(x: 0, y: 0.3) // Выравнивание по левому краю
             
             // Создаем метку для отображения стоимости
             let scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
